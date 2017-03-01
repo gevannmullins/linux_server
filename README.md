@@ -46,8 +46,6 @@ Without "NOPASSWD" in the config, the user is prompted for password whenever sud
 
 Set up key-based authentication for grader
 
-#did this on my local vagrant machine
-vagrant:~$ ssh-keygen
 A private key (.rsa) and a public key (.pub) were created.
 
 Then I got into the Udacity remote machine and copied contents of public key (.pub file) to /home/grader/.ssh/authorized_keys
