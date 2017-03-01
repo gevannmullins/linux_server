@@ -128,30 +128,27 @@ The complete URL to your hosted web application.
 
 
 ##### Edited /etc/apache2/sites-available/000-default.conf:
-
-#update server admin email to my email so that it will show up in error pages       
 ServerAdmin gevann@responsive.co.za
 
-#change document root
+######change document root
 DocumentRoot /var/www/catalog
 
-#create a daemon process for user catalog
-#this isolates execution env using a normal user account meant just for serving the app
+######create a daemon process for user catalog
+######this isolates execution env using a normal user account meant just for serving the app
 WSGIDaemonProcess catalog user=catalog group=catalog threads=5
 
-#create script alias for wsgi main entry script
+######create script alias for wsgi main entry script
 WSGIScriptAlias / /var/www/catalog/catalog.wsgi
 
-#create rules for itemcatalog directory
+######create rules for itemcatalog directory
 <Directory /var/www/catalog>
     WSGIProcessGroup catalog
     WSGIApplicationGroup %{GLOBAL}
     Order deny,allow
     Allow from all
 </Directory>
-After changes were made to the config files, I restarted the Apache server:
 
-#### restart
+#### restart server
 sudo service apache2 restart
 
 ## Go to server app Url:
