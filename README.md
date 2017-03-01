@@ -80,11 +80,13 @@ The complete URL to your hosted web application.
 ##### 16. Installed Git and cloned the repo
  - $ sudo apt-get install git
  - $ sudo mkdir -p /var/www/catalog
- - $ sudo git clone https://github.com/shikeyou/ItemCatalog.git /var/www/itemcatalog/ItemCatalog
-Protected .git folder:
+ - $ sudo git clone https://github.com/gevannmullins/linux_server.git /var/www/catalog
+ - $ sudo chmod 700 /var/www/catalog/.git
+ 
+ 
 
-grader$ sudo chmod 700 /var/www/itemcatalog/ItemCatalog/.git
-I added http://54.200.104.8 to Authorized JavaScript Origins in the project in Google Developer Console, then downloaded the JSON file. Copied the JSON file contents to a new file /var/www/itemcatalog/ItemCatalog/client_secrets.json.
+I added http://54.200.104.8 to Authorized JavaScript Origins in the project in Google Developer Console, then downloaded the JSON file. 
+Copied the JSON file contents to a new file /var/www/itemcatalog/ItemCatalog/client_secrets.json.
 
 Installed additional packages and libraries necessary to host this application:
 
