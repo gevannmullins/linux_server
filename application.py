@@ -16,7 +16,7 @@ from oauth2client.client import FlowExchangeError
 import httplib2
 # from dict2xml import dict2xml
 # from xml.etree.ElementTree import Element, SubElement, Comment, tostring
-# import psycopg2
+import psycopg2
 
 # from page_views import *
 
@@ -28,7 +28,8 @@ app = Flask(__name__)
 CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Catalog Category Items Application"
 
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('postgresql://catalog:password@localhost/catalog')
+# engine = create_engine('sqlite:///catalog.db')
 
 Base.metadata.bind = engine
 
@@ -549,5 +550,5 @@ def gdisconnect():
 if __name__ == '__main__':
     app.secret_key = "Add your secret key"
     # app.debug = True
-    # app.run()
-    app.run(host='0.0.0.0', port=8000)
+    app.run()
+    # app.run(host='0.0.0.0', port=8000)

@@ -83,22 +83,16 @@ The complete URL to your hosted web application.
  - $ sudo git clone https://github.com/gevannmullins/linux_server.git /var/www/catalog
  - $ sudo chmod 700 /var/www/catalog/.git
  
- 
+##### 17. Installed additional packages and libraries 
+ - $ sudo apt-get install python-psycopg2
+ - $ sudo apt-get install python-flask
+ - $ sudo apt-get install python-sqlalchemy
+ - $ sudo apt-get install python-pip
+ - $ sudo pip install oauth2client
+ - $ sudo pip install requests
+ - $ sudo pip install httplib2
 
-I added http://54.200.104.8 to Authorized JavaScript Origins in the project in Google Developer Console, then downloaded the JSON file. 
-Copied the JSON file contents to a new file /var/www/itemcatalog/ItemCatalog/client_secrets.json.
-
-Installed additional packages and libraries necessary to host this application:
-
-grader:~$ sudo apt-get install python-psycopg2
-grader:~$ sudo apt-get install python-flask
-grader:~$ sudo apt-get install python-sqlalchemy
-grader:~$ sudo apt-get install python-pip
-grader:~$ sudo pip install oauth2client
-grader:~$ sudo pip install requests
-grader:~$ sudo pip install httplib2
 Changed the project to use PostgreSQL database (it was using SQLite originally):
-
 Changed all references to SQLite database to reference PostgreSQL database:
 
 #change argument of all create_engine() calls to use postgresql instead of sqlite
