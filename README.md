@@ -76,6 +76,19 @@ The complete URL to your hosted web application.
  - postgres=# CREATE DATABASE catalog;
  - postgres=# \q
  - postgres:~$ exit
+ 
+ 
+ grader:~$ sudo adduser catalog  
+ 
+ grader:~$ sudo -i -u postgres
+ postgres:~$ createuser --interactive -P
+ Enter name of role to add: catalog
+ Enter password for new role:
+ Enter it again:
+ Shall the new role be a superuser? (y/n) n
+ Shall the new role be allowed to create database? (y/n) n
+ Shall the new role be allowed to create more new roles? (y/n) n
+
 
 ##### 16. Installed Git and cloned the repo
  - $ sudo apt-get install git
@@ -92,89 +105,57 @@ The complete URL to your hosted web application.
  - $ sudo pip install requests
  - $ sudo pip install httplib2
 
-Changed the project to use PostgreSQL database (it was using SQLite originally):
-Changed all references to SQLite database to reference PostgreSQL database:
+##### Changed the project to use PostgreSQL database (it was using SQLite originally):
+##### Changed all references to SQLite database to reference PostgreSQL database:
 
-#change argument of all create_engine() calls to use postgresql instead of sqlite
-engine = create_engine('postgresql://catalog:password@localhost/catalog')
-The above step was done for
+##### 18. Ran the database_setyp.py and add_items.py scripts
+ - $ python /var/www/catalog/database_setup.py
+ - $ python /var/www/catalog/add_items.py
+ 
+##### 19. Created a wsgi file as the main entry point, for Flask to work with mod_wsgi:
+ - $ sudo nano /var/www/catalog/catalog.wsgi
+ - Added the following content:
 
-/var/www/itemcatalog/ItemCatalog/application.py
-/var/www/itemcatalog/ItemCatalog/db/db_populate_test_data.py
-/var/www/itemcatalog/ItemCatalog/db/db_setup.py
-/var/www/itemcatalog/ItemCatalog/db/db_show_all_data.py
-Setup the new PostgreSQL database catalog and populate it with some test data
+        import sys
+        applicationPath = '/var/www/catalog'
+        if applicationPath not in sys.path:
+            sys.path.insert(0, applicationPath)
+        
+        import os
+        os.chdir(applicationPath)
+        
+        from application import app as application
 
-grader$ python /var/www/itemcatalog/ItemCatalog/db/db_setup.py
-grader$ python /var/www/itemcatalog/ItemCatalog/db/db_populate_test_data.py 
-Created a wsgi file as the main entry point, for Flask to work with mod_wsgi:
 
-grader:~$ sudo vim /var/www/itemcatalog/itemcatalog.wsgi
-In itemcatalog.wsgi:
-
-#insert application path into sys.path so that it can be found
-import sys
-applicationPath = '/var/www/itemcatalog/ItemCatalog'
-if applicationPath not in sys.path:
-    sys.path.insert(0, applicationPath)
-
-#also change current working directory to that path
-import os
-os.chdir(applicationPath)
-
-#import Flask's app as the WSGI-required application object
-from application import app as application
-Edited /etc/apache2/sites-available/000-default.conf:
+##### Edited /etc/apache2/sites-available/000-default.conf:
 
 #update server admin email to my email so that it will show up in error pages       
-ServerAdmin shikeyou@gmail.com
+ServerAdmin gevann@responsive.co.za
 
 #change document root
-DocumentRoot /var/www/itemcatalog
+DocumentRoot /var/www/catalog
 
 #create a daemon process for user catalog
 #this isolates execution env using a normal user account meant just for serving the app
-WSGIDaemonProcess itemcatalog user=catalog group=catalog threads=5
+WSGIDaemonProcess catalog user=catalog group=catalog threads=5
 
 #create script alias for wsgi main entry script
-WSGIScriptAlias / /var/www/itemcatalog/itemcatalog.wsgi
+WSGIScriptAlias / /var/www/catalog/catalog.wsgi
 
 #create rules for itemcatalog directory
-<Directory /var/www/itemcatalog>
-    WSGIProcessGroup itemcatalog
+<Directory /var/www/catalog>
+    WSGIProcessGroup catalog
     WSGIApplicationGroup %{GLOBAL}
     Order deny,allow
     Allow from all
 </Directory>
 After changes were made to the config files, I restarted the Apache server:
 
-grader:~$ sudo apache2ctl restart 
-During this whole process, if any error pages were served (e.g. 500 Internal Server Error), I would check:
+#### restart
+sudo service apache2 restart
 
-grader:~$ sudo cat /var/log/apache2/error.log
-I also added a logging system to my application.py file so that Flask exceptions get logged (if not, Flask exceptions will just show up as 500 Internal Server Error with nothing showing up in Apache's error log!)
-
-Created the log file first for catalog user:
-
-grader:~$ sudo mkdir /var/log/itemcatalog
-grader:~$ sudo touch /var/log/itemcatalog/error.log
-grader:~$ sudo chown catalog:catalog /var/log/itemcatalog/error.log
-grader:~$ sudo chmod 640 /var/log/itemcatalog/error.log
-Then in application.py:
-
-#in /var/www/itemcatalog/ItemCatalog/application.py
-import logging
-fileHandler = logging.FileHandler('/var/log/itemcatalog/error.log')
-fileHandler.setLevel(logging.WARNING)
-formatter = logging.Formatter('%(asctime)s; %(levelname)s; %(message)s', '%Y-%m-%d %H:%M:%S')
-fileHandler.setFormatter(formatter)
-app.logger.addHandler(fileHandler)
-I also had to move the secret key variable out of the if __name__ == '__main__' part for Google+ login to work:
-
-#in /var/www/itemcatalog/ItemCatalog/application.py
-app = Flask(__name__)
-app.secret_key = os.urandom(123)  #move this out of the "if __name__ == '__main__'" block 
-With all these done, the server is up and running, and the application can be viewed at http://54.200.104.8/
+## Go to server app Url:
+ - http://52.37.193.178
 
 
         
